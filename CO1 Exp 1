@@ -1,0 +1,65 @@
+clc;
+clear;
+close all;
+% Given Parameters
+c = 3e8;              % Speed of light (m/s)
+f = 10e9;             % Operating frequency = 10 GHz
+a = 22.86e-3;         % Waveguide width = 22.86 mm
+b = 10.16e-3;         % Waveguide height = 10.16 mm
+L = 100e-3;           % Waveguide length = 100 mm
+% Cutoff Frequencies
+fc_TE10 = c/(2*a);
+fc_TM11 = (c/2)*sqrt((1/a)^2+(1/b)^2);
+% Propagation Constant for TE10
+k0 = 2*pi*f/c;
+beta = k0*sqrt(1-(fc_TE10/f)^2);
+% Display Parameters
+fprintf('Operating Frequency = %.2f GHz\n',f/1e9);
+fprintf('Waveguide Width = %.2f mm\n',a*1000);
+fprintf('Waveguide Height = %.2f mm\n',b*1000);
+fprintf('Waveguide Length = %.2f mm\n',L*1000);
+fprintf('\nTE10 Cutoff Frequency = %.3f GHz\n',fc_TE10/1e9);
+fprintf('TM11 Cutoff Frequency = %.3f GHz\n',fc_TM11/1e9);
+fprintf('TE10 Propagation Constant = %.2f rad/m\n',beta);
+% Mode decision
+if f > fc_TE10
+    fprintf('TE10: Propagates\n');
+else
+    fprintf('TE10: Below Cutoff\n');
+end
+
+if f > fc_TM11
+    fprintf('TM11: Propagates\n');
+else
+    fprintf('TM11: Below Cutoff\n');
+end
+% Field Distribution
+x = linspace(0,1,50);
+y = linspace(0,1,50);
+[X,Y] = meshgrid(x,y);
+TEM = ones(size(X));
+TE = sin(pi*X);
+TM = sin(pi*X).*sin(pi*Y);
+% Plot
+figure;
+subplot(1,3,1);
+surf(X,Y,TEM);
+title('TEM Mode 192412616');
+xlabel('x');
+ylabel('y');
+zlabel('E Field');
+shading interp;
+subplot(1,3,2);
+surf(X,Y,TE);
+title('TE10 Mode 192412616');
+xlabel('x');
+ylabel('y');
+zlabel('E Field');
+shading interp;
+subplot(1,3,3);
+surf(X,Y,TM);
+title('TM11 Mode 192412616');
+xlabel('x');
+ylabel('y');
+zlabel('E Field');
+shading interp;
